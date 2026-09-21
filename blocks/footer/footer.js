@@ -17,10 +17,18 @@ export default async function decorate(block) {
   const isAuthor = isAuthorEnvironment();
   let footerPath =`/${langCode}/footer`;
 
+  // change nave for each microsite here
+  let microfoot = "";
+  if(window.location.href.includes('neuropax')){
+    microfoot = "/pharma/neuropax";
+  }
+
   if(isAuthor){
     footerPath = footerMeta
     ? new URL(footerMeta, window.location).pathname
-    : `/content/${siteName}${PATH_PREFIX}/${langCode}/footer`;
+    : `/content/${siteName}${PATH_PREFIX}/${langCode}${microfoot}/footer`;
+  } else {
+    footerPath = `/${langCode}${microfoot}/footer`; 
   }
 
   /*

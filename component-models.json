@@ -109,6 +109,68 @@
     ]
   },
   {
+    "id": "textblock",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text"
+      },
+      {
+        "component": "select",
+        "name": "alignment",
+        "label": "Alignment",
+        "options": [
+          {
+            "name": "Left",
+            "value": "left"
+          },
+          {
+            "name": "Center",
+            "value": "center"
+          },
+          {
+            "name": "Right",
+            "value": "right"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "width",
+        "label": "Width",
+        "options": [
+          {
+            "name": "100%",
+            "value": "100%"
+          },
+          {
+            "name": "90%",
+            "value": "90%"
+          },
+          {
+            "name": "80%",
+            "value": "80%"
+          },
+          {
+            "name": "70%",
+            "value": "70%"
+          },
+          {
+            "name": "60%",
+            "value": "60%"
+          },
+          {
+            "name": "50%",
+            "value": "50%"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "title",
     "fields": [
       {
@@ -858,6 +920,47 @@
     ]
   },
   {
+    "id": "cfteaser",
+    "fields": [
+      {
+        "component": "aem-content-fragment",
+        "name": "reference",
+        "label": "Content Fragment Picker",
+        "valueType": "string",
+        "required": true,
+        "variationName": "contentFragmentVariation"
+      },
+      {
+        "component": "text",
+        "name": "contentFragmentVariation",
+        "label": "Selected Variation",
+        "value": "",
+        "valueType": "string",
+        "description": "Persisted variation for publish; leave empty for master.",
+        "condition": { "==": [ { "var": "__alwaysFalse" }, true ] }
+      },
+      {
+        "component": "select",
+        "name": "displaystyle",
+        "label": "Style",
+        "options": [
+          {
+            "name": "default",
+            "value": ""
+          },
+          {
+            "name": "Image Top",
+            "value": "Top Image CTA"
+          },
+          {
+            "name": "Image Left",
+            "value": "Left Image CTA"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "promotion",
     "fields": [
       {
@@ -1000,6 +1103,18 @@
         "label": "Background Color",
         "description": "Optional CSS color (hex, rgb, or var). When set, the title appears in a colored band. Examples: #0a66c2, rgb(10,102,194), var(--main-accent-color)",
         "value": ""
+      }
+    ]
+  },
+  {
+    "id": "defaultoffer",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text"
       }
     ]
   },
@@ -1468,6 +1583,45 @@
         "value": "",
         "label": "Attribution",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "regform",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eventNames",
+        "value": "",
+        "label": "Event Names (comma separated)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "specialties",
+        "value": "",
+        "label": "Specialties (comma separated)"
+      },
+      {
+        "component": "aem-content",
+        "name": "redirectUrl",
+        "label": "Redirect URL",
+        "valueType": "string",
+        "rootPath": "",
+        "description": "Path to linked AEM content"
+      }
+    ]
+  },
+  {
+    "id": "safetyindication",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "text",
+        "value": "",
+        "label": "Text"
       }
     ]
   },

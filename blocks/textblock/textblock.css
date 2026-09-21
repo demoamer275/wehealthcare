@@ -1,0 +1,63 @@
+.textblock {
+  margin: 1.5rem 0;
+}
+
+.textblock-inner {
+  width: 100%;
+}
+
+.textblock-content {
+  margin: 0 auto;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.textblock-content h1 {
+  color: var(--brand-theme-color);
+}
+/* Alignment variants */
+.textblock-align-left .textblock-content {
+  text-align: left;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.textblock-align-center .textblock-content {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.textblock-align-right .textblock-content {
+  text-align: right;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Width variants (percentage of section width) */
+.textblock-width-100 .textblock-content {
+  max-width: 100%;
+}
+
+.textblock-width-90 .textblock-content {
+  max-width: 90%;
+}
+
+.textblock-width-80 .textblock-content {
+  max-width: 80%;
+}
+
+.textblock-width-70 .textblock-content {
+  max-width: 70%;
+}
+
+.textblock-width-60 .textblock-content {
+  max-width: 60%;
+}
+
+.textblock-width-50 .textblock-content {
+  max-width: 50%;
+}
+

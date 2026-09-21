@@ -1,0 +1,107 @@
+.regform {
+  margin: 2rem 0;
+}
+
+.regform-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2rem;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
+}
+
+.regform-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.regform-field label {
+  font-weight: 500;
+  color: var(--form-label-color, #444);
+  margin-bottom: 0.25rem;
+}
+
+.regform-field.single-col {
+  flex-basis: 90%;
+}
+.regform-field.double-col {
+  flex-basis: 45%;
+}
+.regform-field.hidden-field {
+  display: none;
+}
+.regform-required {
+  color: var(--form-error-color, #ff5f3f);
+}
+
+.regform-field input,
+.regform-field select {
+  background-color: var(--form-input-background-color, #fff);
+  border: var(--form-input-border-size, 1px) solid var(--form-input-border-color, #818a91);
+  border-radius: 4px;
+  padding: var(--form-input-padding, 0.75rem 0.6rem);
+  font-size: var(--form-input-font-size, 1rem);
+  color: var(--form-label-color, #444);
+}
+
+.regform-field input:focus,
+.regform-field select:focus {
+  outline: none;
+  border-color: var(--button-primary-color, #5F8DDA);
+  box-shadow: 0 0 0 2px rgb(95 141 218 / 25%);
+}
+
+.regform-actions {
+  width: 100%;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.regform-submit {
+  display: inline-block;
+  padding: var(--form-button-padding, 0.85rem 2.5rem);
+  font-size: var(--form-button-font-size, 1rem);
+  color: var(--form-button-color, #fff);
+  background-color: var(--form-button-background-color, #5F8DDA);
+  border: var(--form-button-border, 2px solid transparent);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.regform-submit:hover {
+  background-color: var(--form-button-background-hover-color, #035fe6);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 15%);
+  transform: translateY(-1px);
+}
+
+.regform-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
+}
+
+@media (width <= 600px) {
+  .regform-form {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .regform-field {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .regform-actions {
+    justify-content: center;
+  }
+
+  .regform-submit {
+    width: 100%;
+  }
+}
+

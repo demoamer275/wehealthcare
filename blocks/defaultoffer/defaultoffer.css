@@ -1,0 +1,66 @@
+.defaultoffer {
+  margin: 1.5rem auto;
+  max-width: 90%;
+  border: 4px solid #AAA;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.defaultoffer-content {
+  text-align: center;
+  margin: 0 auto;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  line-height: 1.6;
+  color: var(--text-color);
+}
+.offerblock-image, .offerblock-content {
+  display: inline-block;
+  vertical-align: top;
+}
+.offerblock-image p {
+  margin: 0;
+  line-height: 1.2;
+  font-size: 1rem;
+}
+.offerblock-image {
+  width: auto;
+  padding-right: 30px;
+  max-width: 29%;
+}
+.offerblock-content {
+  text-align: center;
+  width: 70%;
+}
+.offerblock-content p {
+  margin: 2px 0 10px 0;
+  font-weight: bold;
+}
+.offerblock-content .offerblock-content--spacer {
+  width: 100%;
+    height: 10px;
+    background-color: #0048a8;
+  margin-bottom: 6px;
+  
+}
+.offerblock-content .offerblock-content--title p {
+  font-size: 2rem;
+}
+.offerblock-content .offerblock-content--date p {
+  font-size: 1.8rem;
+  margin-bottom: 0;
+}
+.offerblock-content .offerblock-content--location p {
+  font-size: 1.1rem;
+  margin-top: 0;
+}
+.offerblock-content .offerblock-content--cta {
+  margin-top: 30px;
+}
+.offerblock-content .offerblock-content--cta-btn {
+  border-radius: 20px;
+    background-color: #0048a8;
+    color: #FFF;
+    padding: 10px;
+      text-decoration: none;
+}

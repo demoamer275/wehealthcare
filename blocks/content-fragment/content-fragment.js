@@ -11,7 +11,7 @@ export default async function decorate(block) {
 	// Configuration
   const CONFIG = {
     WRAPPER_SERVICE_URL: 'https://3635370-refdemoapigateway-stage.adobeioruntime.net/api/v1/web/ref-demo-api-gateway/fetch-cf',
-    GRAPHQL_QUERY: '/graphql/execute.json/ref-demo-eds/CTAByPath',
+    GRAPHQL_QUERY: '/graphql/execute.json/wehealthcare/teaserbypath',
     EXCLUDED_THEME_KEYS: new Set(['brandSite', 'brandLogo'])
   };
 	
@@ -23,7 +23,7 @@ export default async function decorate(block) {
 	
 	//const aempublishurl = getMetadata('publishurl') || '';
 	
-  const persistedquery = '/graphql/execute.json/ref-demo-eds/CTAByPath';
+  const persistedquery = '/graphql/execute.json/wehealthcare/teaserbypath';
 
 	//const properties = readBlockConfig(block);
  
@@ -95,7 +95,7 @@ export default async function decorate(block) {
           return;
         }
 
-        const cfReq = offer?.data?.ctaByPath?.item;
+        const cfReq = offer?.data?.teaserByPath?.item;
 
         if (!cfReq) {
           console.error('Error parsing response from GraphQL request - no valid data found', {
@@ -109,7 +109,7 @@ export default async function decorate(block) {
         // Set up block attributes
         const itemId = `urn:aemconnection:${contentPath}/jcr:content/data/${variationname}`;
         block.setAttribute('data-aue-type', 'container');
-        const imgUrl = isAuthor ? cfReq.bannerimage?._authorUrl : cfReq.bannerimage?._publishUrl;
+        const imgUrl = isAuthor ? cfReq.image?._authorUrl : cfReq.image?._publishUrl;
 
         // Determine the layout style
         const isImageLeft = displayStyle === 'image-left';
@@ -141,7 +141,7 @@ export default async function decorate(block) {
 
         // Derive CTA href: supports author-side paths/URLs and publish/EDS URLs
         let ctaHref = '#';
-        const cta = cfReq?.ctaurl;
+        const cta = cfReq?.buttonLink;
         if (cta) {
           if (typeof cta === 'string') {
             // Absolute URL vs repository path
@@ -177,15 +177,16 @@ export default async function decorate(block) {
         }
 
       block.innerHTML = `<div class='banner-content block ${displayStyle}' data-aue-resource=${itemId} data-aue-label=${variationname ||"Elements"} data-aue-type="reference" data-aue-filter="contentfragment" style="${bannerContentStyle}">
-          <div class='banner-detail ${alignment}' style="${bannerDetailStyle}" data-aue-prop="bannerimage" data-aue-label="Main Image" data-aue-type="media" >
+          <div class='banner-detail ${alignment}' style="${bannerDetailStyle}" data-aue-prop="image" data-aue-label="Main Image" data-aue-type="media" >
+                <p data-aue-prop="eyebrow" data-aue-label="Eyebrow" data-aue-type="text" class='cfeyebrow'>${cfReq?.eyebrow || ''}</p>
                 <h2 data-aue-prop="title" data-aue-label="Title" data-aue-type="text" class='cftitle'>${cfReq?.title}</h2>
-                <h3 data-aue-prop="subtitle" data-aue-label="SubTitle" data-aue-type="text" class='cfsubtitle'>${cfReq?.subtitle}</h3>
-                
-                <div data-aue-prop="description" data-aue-label="Description" data-aue-type="richtext" class='cfdescription'><p>${cfReq?.description?.plaintext || ''}</p></div>
+                <h3 data-aue-prop="subTitle" data-aue-label="SubTitle" data-aue-type="text" class='cfsubtitle'>${cfReq?.subTitle || ''}</h3>
+
+                <div data-aue-prop="text" data-aue-label="Description" data-aue-type="richtext" class='cfdescription'>${cfReq?.text?.html || ''}</div>
                  <p class="button-container ${ctaStyle}">
-                  <a href="${ctaHref}" data-aue-prop="ctaurl" data-aue-label="Button Link/URL" data-aue-type="reference"  target="_blank" rel="noopener" data-aue-filter="page" class='button'>
-                    <span data-aue-prop="ctalabel" data-aue-label="Button Label" data-aue-type="text">
-                      ${cfReq?.ctalabel}
+                  <a href="${ctaHref}" data-aue-prop="buttonLink" data-aue-label="Button Link/URL" data-aue-type="reference"  target="_blank" rel="noopener" data-aue-filter="page" class='button'>
+                    <span data-aue-prop="buttonLabel" data-aue-label="Button Label" data-aue-type="text">
+                      ${cfReq?.buttonLabel}
                     </span>
                   </a>
                 </p>

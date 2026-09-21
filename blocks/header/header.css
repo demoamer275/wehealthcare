@@ -60,7 +60,16 @@ header nav[aria-expanded='true'] {
 .wehealthcare-theme .section.nav-sections {
   padding: 22px 32px;
 }
+.neuropax-theme header nav[aria-expanded='true'] {
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+  height: auto;
+}
 
+.neuropax-theme .section.nav-sections {
+  padding: 16px 32px;
+}
 header nav p {
   margin: 0;
   line-height: 1;
@@ -169,7 +178,9 @@ header .nav-brand {
 .wehealthcare-theme header .nav-brand {
   flex-basis: unset;
 }
-
+.neuropax-theme header .nav-brand {
+  flex-basis: unset;
+}
 header nav .nav-brand img {
   width: 100px;
   height: auto;
@@ -178,6 +189,13 @@ header nav .nav-brand img {
 .wehealthcare-theme header nav .nav-brand img {
   width: auto;
   height: 36.5px;
+}
+.neuropax-theme header nav .nav-brand img {
+  width: auto;
+  height: 60px;
+}
+.neuropax-theme header .nav-wrapper {
+  position: initial;
 }
 
 /* sections */
@@ -435,15 +453,15 @@ header nav .nav-tools .icon-search-light  {
 }
 
 
-body.wehealthcare-theme header nav .nav-sections ul > li > a{
+body.wehealthcare-theme header nav .nav-sections ul > li > a, body.neuropax-theme header nav .nav-sections ul > li > a{
   color:#000;
 }
 
- body.wehealthcare-theme header .nav-wrapper {
+ body.wehealthcare-theme header .nav-wrapper, body.neuropax-theme header .nav-wrapper {
   background-color: #fff;
 }
 
-body.wehealthcare-theme .lang-switcher .lang-button{
+body.wehealthcare-theme .lang-switcher .lang-button, body.neuropax-theme .lang-switcher .lang-button {
   color: #000;
   border: 1px solid rgb(0 0 0 / 40%);
 }
@@ -480,8 +498,15 @@ header nav .nav-tools .lang-switcher { display: inline-flex; }
     align-items: flex-start;
   }
   
-  body.wehealthcare-theme header nav .nav-sections ul > li > a{
+  body.wehealthcare-theme header nav .nav-sections ul > li > a, body.neuropax-theme header nav .nav-sections ul > li > a{
     color:#000;
   }
 
 }
+
+.login-wrapper {font-size: .8rem;}
+.login-label {cursor:pointer;}
+.login-modal {position: absolute; top: 50px; background-color: #DDD; border: 1px solid #AAA; padding: 10px; }
+.login-modal.close {display: none;}
+.login-btn {color: #FFF; background-color: blue; border-radius: 6px;padding: 4px; cursor:pointer;}
+.login-modal input {margin-bottom: 8px;}
