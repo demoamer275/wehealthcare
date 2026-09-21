@@ -1,0 +1,460 @@
+{
+  "templates": [
+    {
+      "name": "home",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/",
+      "description": "To be named in naming step",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".section.hero-container .hero.block",
+            ".hero.block"
+          ]
+        },
+        {
+          "name": "cards",
+          "instances": [
+            ".cards-wrapper .cards.block",
+            ".cards.block"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "hero-full-bleed",
+          "selector": [
+            ".section.hero-container:nth-of-type(1)",
+            "main > .section.hero-container:first-of-type"
+          ],
+          "style": null,
+          "blocks": [
+            "hero"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc2",
+          "name": "intro-text",
+          "selector": [
+            ".section.bg-default.cards-container > .default-content-wrapper",
+            ".cards-container .default-content-wrapper"
+          ],
+          "style": null,
+          "blocks": [],
+          "defaultContent": [
+            ".default-content-wrapper h1",
+            ".default-content-wrapper p"
+          ]
+        },
+        {
+          "id": "rc3",
+          "name": "cards-row-1",
+          "selector": [
+            ".section.bg-default.cards-container > .cards-wrapper:nth-of-type(2)",
+            ".cards-container .cards-wrapper:nth-of-type(1)"
+          ],
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc4",
+          "name": "cards-row-2",
+          "selector": [
+            ".section.bg-default.cards-container > .cards-wrapper:nth-of-type(3)",
+            ".cards-container .cards-wrapper:nth-of-type(2)"
+          ],
+          "style": null,
+          "blocks": [
+            "cards"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc5",
+          "name": "find-doctor-hero",
+          "selector": [
+            ".section.bg-light.hero-container",
+            "main > .section.bg-light"
+          ],
+          "style": "light",
+          "blocks": [
+            "hero"
+          ],
+          "defaultContent": []
+        }
+      ],
+      "urlPattern": "/"
+    },
+    {
+      "name": "find-doctor",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/find-doctor"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/find-doctor",
+      "description": "To be named in naming step",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".hero-wrapper .hero.block",
+            ".hero.block"
+          ]
+        },
+        {
+          "name": "find-a-doctor",
+          "instances": [
+            ".find-a-doctor-wrapper .find-doctor",
+            ".find-a-doctor-wrapper > div",
+            ".find-doctor.default"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "find-doctor-main",
+          "selector": [
+            ".section.hero-container.find-a-doctor-container",
+            "main > .section.find-a-doctor-container"
+          ],
+          "style": null,
+          "blocks": [
+            "hero",
+            "find-a-doctor"
+          ],
+          "defaultContent": []
+        }
+      ],
+      "urlPattern": "/en/*"
+    },
+    {
+      "name": "health-wellness",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/health-wellness",
+        "https://main--tvhc--dprevelige.aem.page/en/insurance-plans",
+        "https://main--tvhc--dprevelige.aem.page/en/member-resources"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/health-wellness",
+      "description": "To be named in naming step",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".hero-wrapper .hero.block",
+            ".hero.block"
+          ]
+        },
+        {
+          "name": "carousel",
+          "instances": [
+            ".carousel-wrapper .carousel.block",
+            ".carousel.block"
+          ]
+        },
+        {
+          "name": "columns",
+          "instances": [
+            ".columns-wrapper .columns.block",
+            ".columns.block"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "dynamic",
+          "name": "runtime-sections",
+          "selector": [
+            "main > div.section"
+          ],
+          "style": null,
+          "blocks": [
+            "hero",
+            "carousel",
+            "columns"
+          ],
+          "defaultContent": []
+        }
+      ],
+      "urlPattern": "/en/*"
+    },
+    {
+      "name": "neuropax-landing",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax",
+      "description": "NeuroPax landing: hero, an offer block + intro textblock, and a row of content-fragment teasers.",
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".hero-wrapper .hero.block",
+            ".hero.block"
+          ]
+        },
+        {
+          "name": "defaultoffer",
+          "instances": [
+            ".defaultoffer-wrapper .defaultoffer.block",
+            ".defaultoffer.block"
+          ]
+        },
+        {
+          "name": "textblock",
+          "instances": [
+            ".textblock-wrapper .textblock.block",
+            ".textblock.block"
+          ]
+        },
+        {
+          "name": "cfteaser",
+          "instances": [
+            ".cfteaser-wrapper .cfteaser.block",
+            ".cfteaser.block"
+          ]
+        }
+      ],
+      "urlPattern": "/en/pharma/*",
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "hero",
+          "selector": [
+            ".section.hero-container",
+            "main > .section.hero-container"
+          ],
+          "style": null,
+          "blocks": [
+            "hero"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc2",
+          "name": "offer-intro",
+          "selector": [
+            ".section.defaultoffer-container.textblock-container",
+            "main > .section.defaultoffer-container"
+          ],
+          "style": "default",
+          "blocks": [
+            "defaultoffer",
+            "textblock"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc3",
+          "name": "cf-teasers",
+          "selector": [
+            ".section.cfteaser-container",
+            "main > .section.cfteaser-container"
+          ],
+          "style": "sidebyside",
+          "blocks": [
+            "cfteaser"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc4",
+          "name": "trailing",
+          "selector": [
+            ".section.default:nth-of-type(4)",
+            "main > .section.default:last-of-type"
+          ],
+          "style": "default",
+          "blocks": [],
+          "defaultContent": []
+        }
+      ]
+    },
+    {
+      "name": "neuropax-events",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events",
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events/registration-confirmation"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events",
+      "description": "NeuroPax events: a heading textblock plus an event registration form (regform); confirmation page is textblock-only.",
+      "blocks": [
+        {
+          "name": "textblock",
+          "instances": [
+            ".textblock-wrapper .textblock.block",
+            ".textblock.block"
+          ]
+        },
+        {
+          "name": "regform",
+          "instances": [
+            ".regform-wrapper .regform.block",
+            ".regform.block"
+          ]
+        }
+      ],
+      "urlPattern": "/en/pharma/neuropax/*",
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "heading",
+          "selector": [
+            ".section.textblock-container",
+            "main > .section.textblock-container"
+          ],
+          "style": null,
+          "blocks": [
+            "textblock"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc2",
+          "name": "registration",
+          "selector": [
+            ".section.default.regform-container",
+            "main > .section.regform-container"
+          ],
+          "style": "default",
+          "blocks": [
+            "regform"
+          ],
+          "defaultContent": []
+        }
+      ]
+    },
+    {
+      "name": "neuropax-info",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/patients",
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/resources"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/patients",
+      "description": "NeuroPax patients & resources: Target-personalized pages with no document-authored main content in source (imported as-is).",
+      "blocks": [],
+      "urlPattern": "/en/pharma/neuropax/*",
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "main-empty",
+          "selector": [
+            "main > div.section",
+            "main"
+          ],
+          "style": null,
+          "blocks": [],
+          "defaultContent": []
+        }
+      ]
+    },
+    {
+      "name": "neuropax-prescribers",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/prescribers"
+      ],
+      "representativeUrl": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/prescribers",
+      "description": "NeuroPax prescribers: an Adobe Adaptive Form plus a short prescriber-info note.",
+      "blocks": [
+        {
+          "name": "form",
+          "instances": [
+            ".form-wrapper .form.block",
+            ".form.block",
+            ".form-container .form"
+          ]
+        }
+      ],
+      "urlPattern": "/en/pharma/neuropax/*",
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "lead-spacing",
+          "selector": [
+            ".section.bg-default:nth-of-type(1)",
+            "main > .section.bg-default"
+          ],
+          "style": "bg-default",
+          "blocks": [],
+          "defaultContent": []
+        },
+        {
+          "id": "rc2",
+          "name": "form-section",
+          "selector": [
+            ".section.default.form-container",
+            "main > .section.form-container"
+          ],
+          "style": "default",
+          "blocks": [
+            "form"
+          ],
+          "defaultContent": [
+            ".form-container p"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "neuropax-event-landing",
+      "description": "NeuroPax event landing: a hero band above a content-fragment teaser.",
+      "urls": [
+        "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events/event-landing"
+      ],
+      "blocks": [
+        {
+          "name": "hero",
+          "instances": [
+            ".hero-wrapper .hero.block",
+            ".hero.block"
+          ]
+        },
+        {
+          "name": "cfteaser",
+          "instances": [
+            ".cfteaser-wrapper .cfteaser.block",
+            ".cfteaser.block"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "rc1",
+          "name": "hero",
+          "selector": [
+            ".section.hero-container",
+            "main > .section.hero-container"
+          ],
+          "style": null,
+          "blocks": [
+            "hero"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "rc2",
+          "name": "cf-teaser",
+          "selector": [
+            ".section.default.cfteaser-container",
+            "main > .section.cfteaser-container"
+          ],
+          "style": "default",
+          "blocks": [
+            "cfteaser"
+          ],
+          "defaultContent": []
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "projectType": "xwalk"
+  }
+}

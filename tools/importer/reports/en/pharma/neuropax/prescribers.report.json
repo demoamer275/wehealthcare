@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/prescribers",
+  "path": "en/pharma/neuropax/prescribers",
+  "timestamp": "2026-09-21T19:01:14.293Z",
+  "title": "Prescribers",
+  "template": "neuropax-prescribers",
+  "blocks": [
+    "form"
+  ]
+}

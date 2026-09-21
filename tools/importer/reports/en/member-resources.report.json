@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/member-resources",
+  "path": "en/member-resources",
+  "timestamp": "2026-09-21T16:39:08.665Z",
+  "title": "Member Resources",
+  "template": "health-wellness",
+  "blocks": [
+    "hero",
+    "hero",
+    "columns",
+    "columns"
+  ]
+}

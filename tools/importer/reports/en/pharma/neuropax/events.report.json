@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events",
+  "path": "en/pharma/neuropax/events",
+  "timestamp": "2026-09-21T19:00:53.264Z",
+  "title": "Events",
+  "template": "neuropax-events",
+  "blocks": [
+    "textblock",
+    "regform"
+  ]
+}
