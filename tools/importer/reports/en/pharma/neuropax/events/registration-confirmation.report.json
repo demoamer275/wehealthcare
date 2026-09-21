@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events/registration-confirmation",
+  "path": "en/pharma/neuropax/events/registration-confirmation",
+  "timestamp": "2026-09-21T19:00:58.468Z",
+  "title": "Registration Confirmation",
+  "template": "neuropax-events",
+  "blocks": [
+    "textblock"
+  ]
+}

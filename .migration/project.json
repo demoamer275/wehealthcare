@@ -1,0 +1,11 @@
+{
+  "type": "xwalk",
+  "sites": {
+    "wehealthcare": {
+      "previewOrg": "demoamer275",
+      "previewSite": "wehealthcare",
+      "contentHostUrl": "https://content.da.live/demoamer275/wehealthcare/",
+      "libraryUrl": "https://main--sta-xwalk-boilerplate--aemysites.aem.page/tools/sidekick/library.json"
+    }
+  }
+}

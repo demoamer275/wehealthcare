@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/",
+  "path": "index",
+  "timestamp": "2026-09-21T16:06:07.660Z",
+  "title": "We.Healthcare Home",
+  "template": "home",
+  "blocks": [
+    "hero",
+    "hero",
+    "cards",
+    "cards"
+  ]
+}

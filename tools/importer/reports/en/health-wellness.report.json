@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/health-wellness",
+  "path": "en/health-wellness",
+  "timestamp": "2026-09-21T16:38:57.509Z",
+  "title": "Health and Wellness",
+  "template": "health-wellness",
+  "blocks": [
+    "hero",
+    "hero",
+    "hero",
+    "carousel"
+  ]
+}

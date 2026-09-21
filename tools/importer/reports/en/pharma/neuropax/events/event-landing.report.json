@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/pharma/neuropax/events/event-landing",
+  "path": "en/pharma/neuropax/events/event-landing",
+  "timestamp": "2026-09-21T19:20:40.356Z",
+  "title": "Event Landing",
+  "template": "neuropax-event-landing",
+  "blocks": [
+    "hero",
+    "cfteaser"
+  ]
+}

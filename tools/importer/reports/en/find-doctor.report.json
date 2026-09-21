@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "url": "https://main--tvhc--dprevelige.aem.page/en/find-doctor",
+  "path": "en/find-doctor",
+  "timestamp": "2026-09-21T16:21:47.704Z",
+  "title": "Find a Doctor",
+  "template": "find-doctor",
+  "blocks": [
+    "hero",
+    "find-a-doctor"
+  ]
+}
