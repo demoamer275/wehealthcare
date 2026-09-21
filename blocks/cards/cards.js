@@ -1,5 +1,4 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   const ul = document.createElement('ul');
@@ -19,7 +18,6 @@ export default function decorate(block) {
     const ctaParagraph = ctaDiv?.querySelector('p');
     const ctaStyle = ctaParagraph?.textContent?.trim() || 'default';
     
-    moveInstrumentation(row, li);
     while (row.firstElementChild) li.append(row.firstElementChild);
     
     // Process the li children to identify and style them correctly
@@ -67,7 +65,6 @@ export default function decorate(block) {
   });
   ul.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
     img.closest('picture').replaceWith(optimizedPic);
   });
  

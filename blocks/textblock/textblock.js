@@ -1,7 +1,17 @@
+/**
+ * Text Block block.
+ *
+ * Authored content (rows):
+ *   1. Rich text
+ *
+ * Alignment and width are controlled via block variants (extra words in the
+ * block name, e.g. "Text Block (align-center, width-80)") rather than
+ * dedicated rows.
+ *
+ * @param {Element} block
+ */
 export default function decorate(block) {
   const textCell = block.querySelector(':scope div:nth-child(1) > div');
-  const alignmentRaw = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim().toLowerCase() || 'left';
-  const widthRaw = block.querySelector(':scope div:nth-child(3) > div')?.textContent?.trim() || '100%';
 
   const inner = document.createElement('div');
   inner.classList.add('textblock-inner');
@@ -9,11 +19,10 @@ export default function decorate(block) {
   const content = document.createElement('div');
   content.classList.add('textblock-content');
 
-  //why not updating
   if (textCell && textCell.textContent.trim().length > 0) {
     content.innerHTML = textCell.innerHTML;
   } else {
-    content.innerHTML = "PLACEHOLDER";
+    content.innerHTML = 'PLACEHOLDER';
   }
 
   inner.append(content);
@@ -22,21 +31,15 @@ export default function decorate(block) {
   block.innerHTML = '';
   block.append(inner);
 
-  // Alignment handling
-  const validAlignments = ['left', 'center', 'right'];
-  const alignment = validAlignments.includes(alignmentRaw) ? alignmentRaw : 'left';
-  block.classList.add(`textblock-align-${alignment}`);
+  // Alignment variant (defaults to left)
+  const validAlignments = ['align-left', 'align-center', 'align-right'];
+  const alignment = validAlignments.find((v) => block.classList.contains(v)) || 'align-left';
+  block.classList.add(`textblock-${alignment}`);
 
-  // Width handling
-  let widthValue = widthRaw;
-  if (!widthValue.endsWith('%')) {
-    widthValue = `${widthValue}%`;
-  }
-  const widthNumeric = widthValue.replace('%', '');
-  const validWidths = ['100', '90', '80', '70', '60', '50'];
-
-  if (validWidths.includes(widthNumeric)) {
-    block.classList.add(`textblock-width-${widthNumeric}`);
+  // Width variant
+  const validWidths = ['width-100', 'width-90', 'width-80', 'width-70', 'width-60', 'width-50'];
+  const width = validWidths.find((v) => block.classList.contains(v));
+  if (width) {
+    block.classList.add(`textblock-${width}`);
   }
 }
-

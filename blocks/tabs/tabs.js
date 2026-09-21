@@ -5,55 +5,11 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 let tabBlockCnt = 0;
 
 export default async function decorate(block) {
-  // Get the tabs style from data-aue-prop
-  const tabsStyleParagraph = block.querySelector('p[data-aue-prop="tabsstyle"]');
-  const tabsStyle = tabsStyleParagraph?.textContent?.trim() || '';
-  
-  // Add the style class to block
-  if (tabsStyle && tabsStyle !== 'default' && tabsStyle !== '') {
-    block.classList.add(tabsStyle);
-  }
-  
-  // Fallback for Live where style may be a plain <p> row like "card-style-tab"
-  if (!block.classList.contains('card-style-tab')) {
-    const knownStyles = new Set(['card-style-tab']);
-    const styleContainerFallback = [...block.children].find((child) => (
-      [...child.querySelectorAll('p')].some((p) => knownStyles.has(p.textContent?.trim()))
-    ));
-    if (styleContainerFallback) {
-      const detected = [...styleContainerFallback.querySelectorAll('p')]
-        .map((p) => p.textContent?.trim())
-        .find((txt) => knownStyles.has(txt));
-      if (detected) {
-        block.classList.add(detected);
-        styleContainerFallback.remove();
-      }
-    }
-  }
-  
-  // Proactively remove any style-config node so it doesn't become a tab (UE/Live)
-  const styleNodes = block.querySelectorAll('p[data-aue-prop="tabsstyle"]');
-  styleNodes.forEach((node) => {
-    // find the nearest direct child of the block that contains this node
-    let container = node;
-    while (container && container.parentElement !== block) {
-      container = container.parentElement;
-    }
-    if (container && container.parentElement === block) {
-      container.remove();
-    } else {
-      node.remove();
-    }
-  });
-
-  // Remove any stray top-level title nodes that UE may render under Tabs root
-  [...block.children]
-    .filter((child) => child.matches && child.matches('p[data-aue-prop="title"]'))
-    .forEach((titleNode) => titleNode.remove());
-
-  // Check if card-style-tab variant is requested
+  // Tabs style is a block variant (e.g. "Tabs (card-style-tab)"), so the
+  // class is already present on the block by the time decorate() runs.
   const cardStyleVariant = block.classList.contains('card-style-tab');
-  
+
+
   // build tablist
   const tablist = document.createElement('div');
   tablist.className = 'tabs-list';

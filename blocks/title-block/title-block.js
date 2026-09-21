@@ -5,14 +5,17 @@ const KEY_MAP = {
   titletext: 'title',
   titletype: 'headingLevel',
   headinglevel: 'headingLevel',
-  align: 'align',
-  textalignment: 'align',
-  color: 'color',
-  paddingtop: 'paddingTop',
-  paddingbottom: 'paddingBottom',
   bgcolor: 'bgColor',
   backgroundcolor: 'bgColor',
 };
+
+// Alignment, color and padding are block variants (extra words in the block
+// name, e.g. "Title (align-center, color-primary, pt-large)") rather than
+// dedicated rows, so they're read directly off the block's classList.
+const ALIGN_VARIANTS = ['align-left', 'align-center', 'align-right'];
+const COLOR_VARIANTS = ['color-primary', 'color-light', 'color-dark', 'color-muted'];
+const PADDING_TOP_VARIANTS = ['pt-none', 'pt-small', 'pt-medium', 'pt-large', 'pt-xlarge'];
+const PADDING_BOTTOM_VARIANTS = ['pb-none', 'pb-small', 'pb-medium', 'pb-large', 'pb-xlarge'];
 
 function normalize(s) {
   return (s || '').toLowerCase().replace(/[\s_-]+/g, '');
@@ -52,11 +55,12 @@ export default function decorate(block) {
   // Field renamed titleType -> headingLevel (titleType collided with the core
   // Title component's reserved field name and never persisted). Read both.
   const typeText = read('headingLevel', 'titleType');
-  const alignText = read('align');
-  const colorText = read('color');
-  const padTopText = read('paddingTop');
-  const padBottomText = read('paddingBottom');
   const bgColor = read('bgColor');
+
+  const alignText = ALIGN_VARIANTS.find((v) => block.classList.contains(v)) || '';
+  const colorText = COLOR_VARIANTS.find((v) => block.classList.contains(v)) || '';
+  const padTopText = PADDING_TOP_VARIANTS.find((v) => block.classList.contains(v)) || '';
+  const padBottomText = PADDING_BOTTOM_VARIANTS.find((v) => block.classList.contains(v)) || '';
 
   const tagLower = typeText.toLowerCase();
   const tag = VALID_TAGS.has(tagLower) ? tagLower : 'h2';

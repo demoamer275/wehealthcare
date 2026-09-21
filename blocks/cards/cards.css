@@ -299,7 +299,7 @@
   display: block;
   align-content: center;
 }
-.cards > ul > li.teaser-overlay .cards-card-body div[data-aue-type="richtext"] {
+.cards > ul > li.teaser-overlay .cards-card-body > div {
   width: 50%;
 }
 .cards > ul > li.teaser-overlay .cards-card-body p.button-container a {
@@ -443,9 +443,6 @@
     min-height: 270px;
   }
   .cards > ul > li.teaser-overlay .cards-card-body div {
-    width: 100%;
-  }
-  .cards > ul > li.teaser-overlay .cards-card-body div[data-aue-type="richtext"]{
     width: 100%;
   }
 }

@@ -1,6 +1,5 @@
 // Configuration reading is handled directly from block structure
 import { getMetadata } from '../../scripts/aem.js';
-import { isAuthorEnvironment } from '../../scripts/scripts.js';
 import { getHostname } from '../../scripts/utils.js';
 
 // Sample doctor data - in production, this would come from your data source
@@ -9,14 +8,6 @@ const GRAPHQL_DOCTORS_BY_FOLDER_QUERY = '/graphql/execute.json/ref-demo-eds/GetD
  const CONFIG = {
     WRAPPER_SERVICE_URL: 'https://3635370-refdemoapigateway-stage.adobeioruntime.net/api/v1/web/ref-demo-api-gateway/fetch-cf'
   };
-
-function isAuthorEnvironmentSimple() {
-  try {
-    return typeof window !== 'undefined' && /(^|\.)author[-.]/.test(window.location.hostname);
-  } catch (_) {
-    return false;
-  }
-}
 
 // Function to extract unique specialties from doctor data
 function getUniqueSpecialties(doctors) {
@@ -424,36 +415,20 @@ async function fetchFromContentFragmentFolder(folderPath) {
 
     const hostnameFromPlaceholders = await getHostname();
     const hostname = hostnameFromPlaceholders ? hostnameFromPlaceholders : getMetadata('hostname');
-    const aemauthorurl = getMetadata('authorurl') || '';
     const aempublishurl = hostname?.replace('author', 'publish')?.replace(/\/$/, '') || '';
 
-    const isAuthor = isAuthorEnvironment();
-
-    const requestConfig = isAuthor
-      ? {
-          url: `${aemauthorurl}${GRAPHQL_DOCTORS_BY_FOLDER_QUERY};path=${decodedFolderPath};ts=${Date.now()}`,
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        }
-      : {
-          url: `${CONFIG.WRAPPER_SERVICE_URL}`,
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            graphQLPath: `${aempublishurl}${GRAPHQL_DOCTORS_BY_FOLDER_QUERY}`,
-            cfPath: decodedFolderPath,
-            variation: `main;ts=${Date.now()}`
-          })
-        };
-
-    const response = await fetch(requestConfig.url, {
-      method: requestConfig.method,
-      headers: requestConfig.headers,
-      ...(requestConfig.body && { body: requestConfig.body })
+    const response = await fetch(CONFIG.WRAPPER_SERVICE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        graphQLPath: `${aempublishurl}${GRAPHQL_DOCTORS_BY_FOLDER_QUERY}`,
+        cfPath: decodedFolderPath,
+        variation: `main;ts=${Date.now()}`,
+      }),
     });
 
     if (!response.ok) {
-      console.error(`error making doctors graphql request:${response.status}`, { folderPath, isAuthor });
+      console.error(`error making doctors graphql request:${response.status}`, { folderPath });
       throw new Error(`Failed GraphQL folder query: ${response.status}`);
     }
 
@@ -461,14 +436,14 @@ async function fetchFromContentFragmentFolder(folderPath) {
     try {
       payload = await response.json();
     } catch (parseError) {
-      console.error('Error parsing GraphQL JSON:', { folderPath, isAuthor });
+      console.error('Error parsing GraphQL JSON:', { folderPath });
       throw parseError;
     }
 
     const items = payload?.data?.doctorProfile_healthcare_List?.items || [];
     console.log('GraphQL items received:', items?.length || 0);
 
-    const doctors = items.map((item) => transformGraphQLDoctorItem(item, isAuthor));
+    const doctors = items.map((item) => transformGraphQLDoctorItem(item));
     console.log('Total doctors loaded from GraphQL folder:', doctors.length);
     return doctors;
     
@@ -490,8 +465,8 @@ function extractTagLabel(tagId) {
   return toTitleCase(last);
 }
 
-function transformGraphQLDoctorItem(item, isAuthorEnv) {
-  const imageUrl = item?.image?.[isAuthorEnv ? '_authorUrl' : '_publishUrl'] || item?.image?._dynamicUrl || '';
+function transformGraphQLDoctorItem(item) {
+  const imageUrl = item?.image?._publishUrl || item?.image?._dynamicUrl || item?.image?._authorUrl || '';
   const specialty = Array.isArray(item?.speciality) && item.speciality.length > 0
     ? extractTagLabel(item.speciality[0])
     : '';
@@ -653,23 +628,27 @@ function createSearchForm(config, doctors = []) {
   return form;
 }
 
+// Layout is a block variant (extra word in the block name, e.g.
+// "Find a Doctor (compact)") rather than a dedicated row.
+const LAYOUT_VARIANTS = ['default', 'compact', 'expanded'];
+
 export default async function decorate(block) {
   // Debug log with timestamp to track re-decoration
   const timestamp = new Date().toLocaleTimeString();
   console.log(`🏥 Find-a-doctor block decorating at ${timestamp}`);
-  console.log('Block data-aue-resource:', block.getAttribute('data-aue-resource'));
-  
+
   // Debug: Log all div contents to see what we're reading
   console.log('=== CONFIG DEBUG ===');
   for (let i = 1; i <= 11; i++) {
     const div = block.querySelector(`:scope div:nth-child(${i}) > div`);
     console.log(`Position ${i}:`, div?.textContent?.trim() || 'empty');
   }
-  
-  // Read configuration using key-based approach (works with Universal Editor)
+
+  const layout = LAYOUT_VARIANTS.find((v) => block.classList.contains(v)) || 'default';
+
+  // Read configuration using key-based approach
   let title = 'Find a Doctor';
   let subtitle = 'Search for healthcare providers in your area';
-  let layout = 'default';
   let dataSourceType = 'content-fragments';
   let contentFragmentFolder = '';
   let apiUrl = '';
@@ -697,9 +676,7 @@ export default async function decorate(block) {
             switch (key) {
               case 'title': title = value; break;
               case 'subtitle': subtitle = value; break;
-              case 'layout': layout = value; break;
-              case 'layout style': layout = value; break;
-              case 'data source type': 
+              case 'data source type':
               case 'datasourcetype': dataSourceType = value; break;
               case 'content fragment folder':
               case 'contentfragmentfolder': contentFragmentFolder = value; break;
@@ -895,25 +872,4 @@ export default async function decorate(block) {
   renderResults(doctors, resultsContainer);
   
   console.log(`✅ Find-a-doctor block decoration completed at ${timestamp}`);
-  
-  // Add Universal Editor auto-reload support
-  const blockResource = block.getAttribute('data-aue-resource');
-  if (blockResource) {
-    const handleUEEvent = (event) => {
-      const eventResource = event.detail?.request?.target?.resource;
-      if (eventResource === blockResource) {
-        console.log('🔄 Find-a-doctor config change detected, will reload in 1 second...');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      }
-    };
-    
-    // Listen for Universal Editor events (only add listener once)
-    if (!block._ueListenerAdded) {
-      document.querySelector('main')?.addEventListener('aue:content-patch', handleUEEvent);
-      document.querySelector('main')?.addEventListener('aue:content-update', handleUEEvent);
-      block._ueListenerAdded = true;
-    }
-  }
 }

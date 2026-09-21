@@ -16,8 +16,6 @@ import {
   a,
 } from '../../scripts/dom-helpers.js';
 
-import { isAuthorEnvironment } from '../../scripts/scripts.js';
-
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
 const siteName = await getSiteName();
@@ -375,21 +373,13 @@ async function handleLoginCookie(loginWrapper) {
 }
 
 async function addLogoLink(langCode) {
-
-  //urn:aemconnection:/content/wknd-universal/language-masters/en/magazine/jcr:content
   const currentLang = langCode || getLanguage();
-  const aueResource = document.body.getAttribute('data-aue-resource')
-    ?.replace(new RegExp(`^.*?(\\/content.*?\\/${currentLang}).*$`), '$1');
-  
+
   let logoLink = '';
-    if(aueResource !== null && aueResource !== undefined && aueResource !== ''){
-      logoLink = aueResource+'.html';
+    if(currentLang === 'en') {
+      logoLink = window.location.origin;
     } else {
-      if(langCode === 'en') {
-        logoLink = window.location.origin;
-      } else {
-        logoLink = window.location.origin + `/${langCode}`;
-      }
+      logoLink = window.location.origin + `/${currentLang}`;
     }
 
     if (window.location.pathname.includes('pharma/neuropax')) {
@@ -427,33 +417,17 @@ async function applyCFTheme(themeCFReference) {
     const decodedThemeCFReference = decodeURIComponent(themeCFReference);
     const hostnameFromPlaceholders = await getHostname();
     const hostname = hostnameFromPlaceholders ? hostnameFromPlaceholders : getMetadata('hostname');
-    const aemauthorurl = getMetadata('authorurl') || '';
     const aempublishurl = hostname?.replace('author', 'publish')?.replace(/\/$/, '');
-    const isAuthor = isAuthorEnvironment();
-
-    // Prepare request configuration based on environment
-    const requestConfig = isAuthor 
-      ? {
-          url: `${aemauthorurl}${CONFIG.GRAPHQL_QUERY};path=${decodedThemeCFReference};ts=${Date.now()}`,
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        }
-      : {
-          url: `${CONFIG.WRAPPER_SERVICE_URL}`,
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            graphQLPath: `${aempublishurl}${CONFIG.GRAPHQL_QUERY}`,
-            cfPath: decodedThemeCFReference,
-            variation: `master;ts=${Date.now()}`
-          })
-        };
 
     // Fetch theme data
-    const response = await fetch(requestConfig.url, {
-      method: requestConfig.method,
-      headers: requestConfig.headers,
-      ...(requestConfig.body && { body: requestConfig.body })
+    const response = await fetch(CONFIG.WRAPPER_SERVICE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        graphQLPath: `${aempublishurl}${CONFIG.GRAPHQL_QUERY}`,
+        cfPath: decodedThemeCFReference,
+        variation: `master;ts=${Date.now()}`,
+      }),
     });
 
     if (!response.ok) {
@@ -516,12 +490,8 @@ export default async function decorate(block) {
   
 
   
-  const navMeta = getMetadata('nav');
   const langCode = getLanguage();
   console.log("langCode :"+langCode);
-
-   const isAuthor = isAuthorEnvironment();
-    let navPath =`/${langCode}/nav`;
 
     // change nave for each microsite here
     let micronav = "";
@@ -529,14 +499,7 @@ export default async function decorate(block) {
       micronav = "/pharma/neuropax";
     }
 
-    if(isAuthor){
-      navPath = navMeta ? new URL(navMeta, window.location).pathname : `/content/${siteName}${PATH_PREFIX}/${langCode}${micronav}/nav`;
-    } else {
-      navPath = `/${langCode}${micronav}/nav`;  // temp fix for en site untils paths worked out
-    }
-
-  
-  //const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
+    const navPath = `/${langCode}${micronav}/nav`;
 
   const pathSegments = window.location.pathname.split('/').filter(Boolean);
   //console.log("pathSegments header: ", pathSegments);

@@ -26,10 +26,9 @@
 ## Documentation
 [Ref Demo 2.0](https://adobe.com/go/refdemo) 
 
-## Prerequisites
-Install the latest content package from link shared in Quick HowTo document above. 
-*Github release to be added soon.*
+## Authoring
+Content is authored in [Document Authoring (da.live)](https://da.live), not AEM Crosswalk/Universal Editor. Use the sidekick's "Edit" action, or open the site directly at `https://da.live/edit#/{org}/{site}/{path}`.
 
 ## Installation
-1. Just install the content package using CRX package manager. You get a fully working sample site along with a quick site template to build new sites.
-2. To customize and publish to Edge, "Use This Template" option in this repository to create your own repository and update the paths/fstab, etc. as per outlined in the document.
+1. Use the "Use This Template" option in this repository to create your own repository.
+2. Connect the repository to your da.live org/site (see `.migration/project.json` for the current org/site mapping).

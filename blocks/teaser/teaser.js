@@ -114,18 +114,16 @@ export default function decorate(block) {
 
   const properties = readBlockConfig(block);
 
-  var swooshbgClass = 'swoosh-bg';
-  var swooshlayersClass = 'swoosh-layers';
+  // Swoosh visibility and CTA style are block variants (extra words in the
+  // block name, e.g. "Teaser (no-swoosh, cta-button-secondary)") rather than
+  // dedicated rows.
+  var swooshbgClass = block.classList.contains('no-swoosh') ? 'swoosh-bg-hidden' : 'swoosh-bg';
+  var swooshlayersClass = block.classList.contains('no-swoosh') ? 'swoosh-layers-hidden' : 'swoosh-layers';
 
-  if(properties.useswoosh && properties.useswoosh == "false"){
-    swooshbgClass = 'swoosh-bg-hidden';
-    swooshlayersClass = 'swoosh-layers-hidden';
-  }
-
-  // Get CTA style and set button container class
   var buttonContainerClass = 'button-container';
-  if(properties.ctastyle){
-    buttonContainerClass = `cta-${properties.ctastyle}`;
+  var ctaStyle = ['cta-button', 'cta-button-secondary', 'cta-button-dark'].find((v) => block.classList.contains(v));
+  if (ctaStyle) {
+    buttonContainerClass = ctaStyle;
   }
 
   const swooshFirst = `${window.hlx.codeBasePath}/icons/teaser_innerswoosh.svg`;

@@ -333,7 +333,7 @@
   display: block;
   align-content: center;
 }
-.carousel > ul > li.teaser-overlay .cards-card-body div[data-aue-type="richtext"] {
+.carousel > ul > li.teaser-overlay .cards-card-body > div {
   width: 50%;
 }
 .carousel li.teaser-overlay .cards-card-body a {

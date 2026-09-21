@@ -1,6 +1,11 @@
 import { getMetadata } from '../../scripts/aem.js';
-import { isAuthorEnvironment } from '../../scripts/scripts.js';
-import { getHostname, resolveImageUrl } from '../../scripts/utils.js';
+import { getHostname } from '../../scripts/utils.js';
+
+function resolveImageUrl(image) {
+  if (!image) return '';
+  if (typeof image === 'string') return image;
+  return image._publishUrl || image._authorUrl || image._path || '';
+}
 
 // --- Constants ---
 const GRAPHQL_QUERY_PATH = '/graphql/execute.json/ref-demo-eds/GetContentCardListFromFolder';
@@ -118,8 +123,7 @@ async function fetchViaOpenAPI(folderPath, modelName) {
       }
     }
 
-    const isAuthor = isAuthorEnvironment();
-    return filteredItems.map((item) => transformOpenAPIItem(item, isAuthor));
+    return filteredItems.map((item) => transformOpenAPIItem(item));
   } catch (error) {
     console.error('Error in Open API fetch:', error);
     return null;
@@ -134,31 +138,16 @@ async function fetchViaGraphQL(folderPath) {
     const decodedFolderPath = decodeURIComponent(folderPath);
     const hostnameFromPlaceholders = await getHostname();
     const hostname = hostnameFromPlaceholders || getMetadata('hostname');
-    const aemauthorurl = getMetadata('authorurl') || '';
     const aempublishurl = hostname?.replace('author', 'publish')?.replace(/\/$/, '') || '';
-    const isAuthor = isAuthorEnvironment();
 
-    const requestConfig = isAuthor
-      ? {
-        url: `${aemauthorurl}${GRAPHQL_QUERY_PATH};path=${decodedFolderPath};ts=${Date.now()}`,
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      }
-      : {
-        url: CONFIG.WRAPPER_SERVICE_URL,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          graphQLPath: `${aempublishurl}${GRAPHQL_QUERY_PATH}`,
-          cfPath: decodedFolderPath,
-          variation: `main;ts=${Date.now()}`,
-        }),
-      };
-
-    const response = await fetch(requestConfig.url, {
-      method: requestConfig.method,
-      headers: requestConfig.headers,
-      ...(requestConfig.body && { body: requestConfig.body }),
+    const response = await fetch(CONFIG.WRAPPER_SERVICE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        graphQLPath: `${aempublishurl}${GRAPHQL_QUERY_PATH}`,
+        cfPath: decodedFolderPath,
+        variation: `main;ts=${Date.now()}`,
+      }),
     });
 
     if (!response.ok) {
@@ -167,7 +156,7 @@ async function fetchViaGraphQL(folderPath) {
 
     const payload = await response.json();
     const items = payload?.data?.contentCardList?.items || [];
-    return items.map((item) => transformGraphQLItem(item, isAuthor));
+    return items.map((item) => transformGraphQLItem(item));
   } catch (error) {
     console.error('Error in GraphQL fetch:', error);
     return [];
@@ -225,8 +214,8 @@ async function fetchFragmentData(config) {
 
 // --- Transformers ---
 
-function transformOpenAPIItem(item, isAuthorEnv) {
-  const imageUrl = resolveImageUrl(item?.image, isAuthorEnv);
+function transformOpenAPIItem(item) {
+  const imageUrl = resolveImageUrl(item?.image);
 
   const tags = Array.isArray(item?.tags)
     ? item.tags.map(extractTagLabel).filter(Boolean)
@@ -249,8 +238,8 @@ function transformOpenAPIItem(item, isAuthorEnv) {
   };
 }
 
-function transformGraphQLItem(item, isAuthorEnv) {
-  const imageUrl = resolveImageUrl(item?.image, isAuthorEnv);
+function transformGraphQLItem(item) {
+  const imageUrl = resolveImageUrl(item?.image);
 
   const tags = Array.isArray(item?.tags)
     ? item.tags.map(extractTagLabel).filter(Boolean)
@@ -458,11 +447,25 @@ function addCarouselNav(block, resultsContainer) {
 }
 
 // --- Main Decorate Function ---
+// Layout and CTA style are block variants (extra words in the block name,
+// e.g. "Fragment List (carousel, cta-button-secondary)") rather than
+// dedicated rows.
+const LAYOUT_VARIANTS = ['grid', 'list', 'compact', 'masonry', 'carousel', 'articles'];
+const CTA_STYLE_VARIANTS = {
+  'cta-button': 'button',
+  'cta-button-secondary': 'button-secondary',
+  'cta-button-dark': 'button-dark',
+  'cta-link': 'link',
+};
+
 export default async function decorate(block) {
+  const layout = LAYOUT_VARIANTS.find((v) => block.classList.contains(v)) || 'grid';
+  const ctaStyleClass = Object.keys(CTA_STYLE_VARIANTS).find((v) => block.classList.contains(v));
+  const ctaStyle = ctaStyleClass ? CTA_STYLE_VARIANTS[ctaStyleClass] : '';
+
   // Parse config from block key-value structure
   let title = '';
   let subtitle = '';
-  let layout = 'grid';
   let dataSourceType = 'content-fragments';
   let contentFragmentFolder = '';
   let modelName = '';
@@ -473,7 +476,6 @@ export default async function decorate(block) {
   let searchPlaceholder = 'Search...';
   let showTags = false;
   let ctaButtonLabel = '';
-  let ctaStyle = '';
   let noResultsMessage = '';
   let customClass = '';
 
@@ -492,8 +494,6 @@ export default async function decorate(block) {
     switch (key) {
       case 'title': title = value; break;
       case 'subtitle': subtitle = value; break;
-      case 'layout':
-      case 'layout style': layout = value; break;
       case 'data source type':
       case 'datasourcetype': dataSourceType = value; break;
       case 'content fragment folder':
@@ -514,8 +514,6 @@ export default async function decorate(block) {
       case 'showtags': showTags = value === 'true'; break;
       case 'cta button label':
       case 'ctabuttonlabel': ctaButtonLabel = value; break;
-      case 'cta style':
-      case 'ctastyle': ctaStyle = value; break;
       case 'no results message':
       case 'noresultsmessage': noResultsMessage = value; break;
       case 'custom class':
@@ -608,21 +606,5 @@ export default async function decorate(block) {
   // Add carousel navigation if layout is carousel
   if (layout === 'carousel') {
     addCarouselNav(block, resultsContainer);
-  }
-
-  // Universal Editor auto-reload support
-  const blockResource = block.getAttribute('data-aue-resource');
-  if (blockResource) {
-    const handleUEEvent = (event) => {
-      const eventResource = event.detail?.request?.target?.resource;
-      if (eventResource === blockResource) {
-        setTimeout(() => window.location.reload(), 1000);
-      }
-    };
-    if (!block._ueListenerAdded) {
-      document.querySelector('main')?.addEventListener('aue:content-patch', handleUEEvent);
-      document.querySelector('main')?.addEventListener('aue:content-update', handleUEEvent);
-      block._ueListenerAdded = true;
-    }
   }
 }

@@ -1,5 +1,4 @@
 import { getMetadata, loadScript, fetchPlaceholders } from '../../scripts/aem.js';
-import { isAuthorEnvironment } from '../../scripts/scripts.js';
 import { getHostname, mapAemPathToSitePath } from '../../scripts/utils.js';
 
 /* ────────────────────────────────────────────
@@ -61,32 +60,26 @@ function normaliseOfferToCfShape(data) {
  * API-gateway pattern as the content-fragment block)
  * ──────────────────────────────────────────── */
 
-async function fetchContentFragment(contentPath, variation, isAuthor, aemAuthorUrl, aemPublishUrl) {
-  log('Fetching default CF:', { contentPath, variation, isAuthor });
+async function fetchContentFragment(contentPath, variation, aemPublishUrl) {
+  log('Fetching default CF:', { contentPath, variation });
 
-  const requestConfig = isAuthor
-    ? {
-      url: `${aemAuthorUrl}${CF_CONFIG.GRAPHQL_QUERY};path=${contentPath};variation=${variation};ts=${Date.now()}`,
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    }
-    : {
-      url: CF_CONFIG.WRAPPER_SERVICE_URL,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        graphQLPath: `${aemPublishUrl}${CF_CONFIG.GRAPHQL_QUERY}`,
-        cfPath: contentPath,
-        variation: `${variation};ts=${Date.now()}`,
-      }),
-    };
+  const requestConfig = {
+    url: CF_CONFIG.WRAPPER_SERVICE_URL,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      graphQLPath: `${aemPublishUrl}${CF_CONFIG.GRAPHQL_QUERY}`,
+      cfPath: contentPath,
+      variation: `${variation};ts=${Date.now()}`,
+    }),
+  };
 
   log('CF request →', requestConfig.method, requestConfig.url);
 
   const res = await fetch(requestConfig.url, {
     method: requestConfig.method,
     headers: requestConfig.headers,
-    ...(requestConfig.body && { body: requestConfig.body }),
+    body: requestConfig.body,
   });
 
   log('CF response status:', res.status);
@@ -294,12 +287,10 @@ async function fetchTargetOffer(mbox) {
  * Render a promotion card from CF-shaped data
  * ──────────────────────────────────────────── */
 
-async function renderCard(block, cfItem, isAuthor, source = 'default', displayStyle = '', alignment = '') {
+async function renderCard(block, cfItem, source = 'default', displayStyle = '', alignment = '') {
   log(`Rendering card [${source}]:`, cfItem?.title, { displayStyle, alignment });
 
-  const imgUrl = isAuthor
-    ? (cfItem.bannerimage?._path || cfItem.bannerimage?._authorUrl)
-    : (cfItem.bannerimage?._publishUrl || cfItem.bannerimage?._authorUrl);
+  const imgUrl = cfItem.bannerimage?._publishUrl || cfItem.bannerimage?._authorUrl;
 
   let ctaHref = '#';
   const cta = cfItem.ctaurl;
@@ -307,13 +298,11 @@ async function renderCard(block, cfItem, isAuthor, source = 'default', displaySt
     if (typeof cta === 'string') {
       ctaHref = cta;
     } else {
-      ctaHref = isAuthor
-        ? (cta._authorUrl || cta._path || '#')
-        : (cta._publishUrl || cta._path || '#');
+      ctaHref = cta._publishUrl || cta._path || '#';
     }
   }
 
-  if (!isAuthor && ctaHref.startsWith('/content/')) {
+  if (ctaHref.startsWith('/content/')) {
     try {
       const mapped = await mapAemPathToSitePath(ctaHref);
       if (mapped) ctaHref = mapped;
@@ -409,42 +398,34 @@ export default async function decorate(block) {
   const contentPath = block.querySelector(':scope div:nth-child(1) > div a')?.textContent?.trim()
     || block.querySelector(':scope div:nth-child(1) > div')?.textContent?.trim();
   const variation = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim()?.toLowerCase()?.replace(' ', '_') || 'master';
-  const displayStyle = block.querySelector(':scope div:nth-child(3) > div')?.textContent?.trim() || '';
-  const alignment = block.querySelector(':scope div:nth-child(4) > div')?.textContent?.trim() || '';
-  const mboxName = block.querySelector(':scope div:nth-child(5) > div')?.textContent?.trim() || DEFAULT_MBOX;
+  const mboxName = block.querySelector(':scope div:nth-child(3) > div')?.textContent?.trim() || DEFAULT_MBOX;
+
+  // Layout is controlled via block variants (extra words in the block name,
+  // e.g. "Promotion (image-left, text-center)") rather than dedicated rows.
+  const displayStyle = ['image-left', 'image-right', 'image-top', 'image-bottom'].find((v) => block.classList.contains(v)) || '';
+  const alignment = ['text-left', 'text-right', 'text-center'].find((v) => block.classList.contains(v)) || '';
 
   log('========== Promotion block init ==========');
   log('Config:', { contentPath, variation, displayStyle, alignment, mboxName });
 
   block.innerHTML = '';
 
-  const isAuthor = isAuthorEnvironment();
   const hostnameFromPlaceholders = await getHostname();
   const hostname = hostnameFromPlaceholders || getMetadata('hostname');
-  const aemAuthorUrl = getMetadata('authorurl') || '';
   const aemPublishUrl = hostname?.replace('author', 'publish')?.replace(/\/$/, '') || '';
 
-  log('Environment:', { isAuthor, hostname, aemAuthorUrl, aemPublishUrl });
+  log('Environment:', { hostname, aemPublishUrl });
 
   if (!contentPath) {
     logWarn('No content path configured');
-    if (isAuthor) {
-      block.innerHTML = `<div class="promotion-card promotion-placeholder">
-        <div class="promotion-content">
-          <p class="promotion-subtitle">Adobe Target Personalization</p>
-          <h3 class="promotion-title">Promotion Block</h3>
-          <p class="promotion-description">Select a default Content Fragment using the block properties panel. At runtime, Adobe Target will replace this with a personalized offer as per your audience and offer configuration. (Default mbox is: <strong>${mboxName}</strong>).</p>
-        </div>
-      </div>`;
-    }
     return;
   }
 
   try {
-    const cfItem = await fetchContentFragment(contentPath, variation, isAuthor, aemAuthorUrl, aemPublishUrl);
+    const cfItem = await fetchContentFragment(contentPath, variation, aemPublishUrl);
 
     if (cfItem) {
-      await renderCard(block, cfItem, isAuthor, 'default-CF', displayStyle, alignment);
+      await renderCard(block, cfItem, 'default-CF', displayStyle, alignment);
     } else {
       logWarn('Default CF returned null – block will be empty unless Target provides an offer');
     }
@@ -453,7 +434,7 @@ export default async function decorate(block) {
     fetchTargetOffer(mboxName).then(async (targetItem) => {
       if (targetItem) {
         log('🎯 Target returned a personalised offer – swapping card');
-        await renderCard(block, targetItem, isAuthor, 'target-personalised', displayStyle, alignment);
+        await renderCard(block, targetItem, 'target-personalised', displayStyle, alignment);
         block.classList.add('promotion-personalised');
         log('Card swap complete ✓');
       } else {

@@ -2091,25 +2091,25 @@ export default async function decorate(block) {
     if (candidate && !isJsonSource) console.log('[search] ignoring non-JSON config anchor for source:', candidate);
   }
 
-  // Read style (row 2), pageSize (row 3), assetSearchPath (row 4); hide all config rows.
+  // Style is a block variant (e.g. "Search (search-icon)"), read off classList
+  // elsewhere. Read pageSize (row 2), assetSearchPath (row 3),
+  // excludeAssetPaths (row 4); hide all config rows.
   try {
-    const styleText = block.querySelector(':scope > div:nth-child(2) > div p')?.textContent?.trim();
-    if (styleText) block.classList.add(styleText);
-    const pageSizeText = block.querySelector(':scope > div:nth-child(3) > div p')?.textContent?.trim()
-      || block.querySelector(':scope > div:nth-child(3) > div')?.textContent?.trim();
+    const pageSizeText = block.querySelector(':scope > div:nth-child(2) > div p')?.textContent?.trim()
+      || block.querySelector(':scope > div:nth-child(2) > div')?.textContent?.trim();
     const pageSizeNum = parseInt(pageSizeText, 10);
     if (pageSizeNum && pageSizeNum > 0) block.dataset.pageSize = String(pageSizeNum);
 
     // Asset search path — accepts an anchor href (aem-content picker) or plain text.
-    const row4 = block.querySelector(':scope > div:nth-child(4)');
-    if (row4) {
-      const anchor = row4.querySelector('a');
+    const row3 = block.querySelector(':scope > div:nth-child(3)');
+    if (row3) {
+      const anchor = row3.querySelector('a');
       const anchorHref = anchor?.getAttribute('title')
         || anchor?.getAttribute('href')
         || anchor?.textContent
         || '';
-      const plainText = row4.querySelector('div p')?.textContent
-        || row4.querySelector('div')?.textContent
+      const plainText = row3.querySelector('div p')?.textContent
+        || row3.querySelector('div')?.textContent
         || '';
       const assetPath = normalizeAssetFolderPath(anchorHref || plainText || '');
       if (assetPath) block.dataset.assetSearchPath = assetPath;
@@ -2118,18 +2118,17 @@ export default async function decorate(block) {
     // Excluded asset paths — comma/newline separated DAM path prefixes.
     // Any asset record whose absolute or relative path starts with one of
     // these prefixes is dropped before merging into search results.
-    const row5 = block.querySelector(':scope > div:nth-child(5)');
-    if (row5) {
-      const excludeText = (row5.querySelector('div p')?.textContent
-        || row5.querySelector('div')?.textContent
+    const row4 = block.querySelector(':scope > div:nth-child(4)');
+    if (row4) {
+      const excludeText = (row4.querySelector('div p')?.textContent
+        || row4.querySelector('div')?.textContent
         || '').trim();
       if (excludeText) block.dataset.excludeAssetPaths = excludeText;
     }
 
     const row1 = block.querySelector(':scope > div:nth-child(1)');
     const row2 = block.querySelector(':scope > div:nth-child(2)');
-    const row3 = block.querySelector(':scope > div:nth-child(3)');
-    [row1, row2, row3, row4, row5].forEach((r) => { if (r) r.style.display = 'none'; });
+    [row1, row2, row3, row4].forEach((r) => { if (r) r.style.display = 'none'; });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('[search] style/hide rows error', e);

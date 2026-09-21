@@ -1,11 +1,8 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
 import createSlider from '../../scripts/slider.js';
 import {
   applyCarouselImageZoom,
   finalizeCarouselImageZoom,
-  getConfigText,
-  normalizeZoomMode,
   readCardRowConfig,
 } from '../../scripts/card-image-zoom.js';
 
@@ -20,31 +17,19 @@ function isCardRow(row) {
   return row.children.length >= 2;
 }
 
-// Carousel-level config rows (autoplay, interval, imageZoom) render as single-cell
-// rows BEFORE the card rows. Detect by content shape and extract.
+// Carousel-level autoplay/interval/imageZoom are block variants (extra words
+// in the block name, e.g. "Carousel (autoplay, interval-7000, zoom-in)")
+// rather than dedicated config rows, so they're read off the block's classList.
+const INTERVAL_VARIANTS = [3000, 5000, 7000, 10000];
+const ZOOM_VARIANTS = ['zoom-in', 'zoom-out', 'big-zoom'];
+
 function extractCarouselConfig(block) {
-  const config = { autoplay: false, intervalMs: 5000, imageZoom: '' };
-  [...block.children].forEach((row) => {
-    if (isCardRow(row)) return;
-    const cellTexts = [...row.children].map(getConfigText).filter(Boolean);
-    const text = cellTexts.join(' ') || (row.textContent || '').trim();
-    const textLower = text.toLowerCase();
-    const zoomMode = cellTexts.map(normalizeZoomMode).find(Boolean) || normalizeZoomMode(text);
-    if (zoomMode) {
-      config.imageZoom = zoomMode;
-      row.remove();
-      return;
-    }
-    if (textLower === 'true' || textLower === 'false') {
-      config.autoplay = (textLower === 'true');
-      row.remove();
-    } else if (/^\d+$/.test(text)) {
-      const n = parseInt(text, 10);
-      if (n > 0) config.intervalMs = n;
-      row.remove();
-    }
-  });
-  return config;
+  const intervalClass = INTERVAL_VARIANTS.find((ms) => block.classList.contains(`interval-${ms}`));
+  return {
+    autoplay: block.classList.contains('autoplay'),
+    intervalMs: intervalClass || 5000,
+    imageZoom: ZOOM_VARIANTS.find((v) => block.classList.contains(v)) || '',
+  };
 }
 
 export default function decorate(block) {
@@ -72,7 +57,6 @@ export default function decorate(block) {
         li.className = config.style;
       }
 
-      moveInstrumentation(row, li);
       while (row.firstElementChild) li.append(row.firstElementChild);
 
       [...li.children].forEach((div, index) => {
@@ -104,7 +88,6 @@ export default function decorate(block) {
 
   slider.querySelectorAll('picture > img').forEach((img) => {
     const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
     img.closest('picture').replaceWith(optimizedPic);
   });
 
