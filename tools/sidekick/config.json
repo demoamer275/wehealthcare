@@ -1,5 +1,24 @@
 {
   "project": "AEM XWalk Boilerplate",
   "editUrlLabel": "AEM Editor",
-  "editUrlPattern": "{{contentSourceUrl}}{{pathname}}?cmd=open"
+  "editUrlPattern": "{{contentSourceUrl}}{{pathname}}?cmd=open",
+  "plugins": [
+    {
+      "id": "aem-genai-variations",
+      "titleI18n": {
+        "en": "Generate with AI"
+      },
+      "environments": ["preview"],
+      "includePaths": ["**"],
+      "event": "aem-genai-variations-sidekick"
+    },
+    {
+      "id": "target",
+      "title": "Target",
+      "url": "https://experience.adobe.com/#/@acsmarketing/target/activities/activityLibrary",
+      "passConfig": true,
+      "environments": ["preview", "live", "edit", "prod"],
+      "includePaths": ["**"]
+    }
+  ]
 }
