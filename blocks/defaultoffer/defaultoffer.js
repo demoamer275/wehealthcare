@@ -7,15 +7,15 @@ export default function decorate(block) {
   const imageSection = document.createElement('div');
   imageSection.classList.add('offerblock-image');
 
-  const img = document.createElement('img');
-  img.src = 'speakers.jpg';
+  //const img = document.createElement('img');
+  //img.src = 'speakers.jpg';
 
-  const bylineWrapper = document.createElement('div');
-  const bylineParagraph = document.createElement('p');
-  bylineParagraph.textContent = 'byline';
-  bylineWrapper.append(bylineParagraph);
+  //const bylineWrapper = document.createElement('div');
+  //const bylineParagraph = document.createElement('p');
+  //bylineParagraph.textContent = 'byline';
+  //bylineWrapper.append(bylineParagraph);
 
-  imageSection.append(img, bylineWrapper);
+  //imageSection.append(img, bylineWrapper);
 
   // Content section
   const contentSection = document.createElement('div');
