@@ -18,6 +18,40 @@
 .neuropax-theme .hero {
   min-height: 100px;
   padding: 0;
+  aspect-ratio: 2000 / 849;
+  display: block;
+}
+
+.neuropax-theme .hero > div:nth-child(2),
+.neuropax-theme .hero > div:nth-child(3) {
+  position: absolute;
+  left: 48px;
+  max-width: 50%;
+}
+
+.neuropax-theme .hero > div:nth-child(2) {
+  top: 96px;
+}
+
+.neuropax-theme .hero > div:nth-child(3) {
+  margin: auto;
+  width: 100%;
+  bottom: 48px;
+}
+
+.neuropax-theme .hero h1,
+.neuropax-theme .hero p {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  text-align: center;
+  color: var(--brand-theme-color);
+}
+.neuropax-theme .hero p {
+  font-size: 1.3em;
+}
+.neuropax-theme .hero h1::after {
+  display: none;
 }
 /* --------------------------
    Headings & Paragraphs
@@ -66,9 +100,6 @@
   z-index: -1;
   inset: 0;
   box-sizing: border-box;
-}
-.neuropax-theme .hero picture {
-  position: relative;
 }
 .hero img {
   object-fit: cover;

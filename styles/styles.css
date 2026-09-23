@@ -344,6 +344,13 @@ body.green-theme {
   --main-accent-color: #00c4ff;
   --nav-text-color:#000000;
 }
+body.neuropax-theme {
+  --brand-theme-color: #0048A8;
+  --brand-nav-text-color:#000000;
+  --main-accent-color: #0048A8;
+  --nav-text-color:#000000;
+}
+
 /*brand header footer brand themes*/
 body header .nav-wrapper{
   background-color: var(--nav-background-color);
@@ -398,6 +405,10 @@ header {
   left: 0;
   right: 0;
   z-index: 111;
+}
+.neuropax-theme header {
+  min-height: unset;
+  height: auto;
 }
 
 header .header,
@@ -593,6 +604,16 @@ main picture::before {
 	-webkit-transform: skewX(-25deg);
 	transform: skewX(-25deg);
 }
+.neuropax-theme main picture::before {
+	position: relative;
+	top: 0;
+	left: -75%;
+	z-index: 111;
+	display: block;
+	content: unset;
+  width: auto;
+}
+
 main picture:hover::before {
 	-webkit-animation: shine .75s;
 	animation: shine .75s;
@@ -787,7 +808,13 @@ main > .section[data-sec-full-width="true"] > div {
   padding: 0;
 }
 
-
+main > .section[data-sec-layout="sidebyside"] {
+    text-align: center;
+}
+main > .section[data-sec-layout="sidebyside"] > div {
+    display: inline-block;
+    vertical-align: top;
+}
 /* Section Background Colors */
 main .section.bg-theme {  
   background-color: var(--main-accent-color);

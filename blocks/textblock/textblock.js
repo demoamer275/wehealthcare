@@ -32,14 +32,14 @@ export default function decorate(block) {
   block.append(inner);
 
   // Alignment variant (defaults to left)
-  const validAlignments = ['align-left', 'align-center', 'align-right'];
-  const alignment = validAlignments.find((v) => block.classList.contains(v)) || 'align-left';
-  block.classList.add(`textblock-${alignment}`);
+  //const validAlignments = ['align-left', 'align-center', 'align-right'];
+  //const alignment = validAlignments.find((v) => block.classList.contains(v)) || 'align-left';
+  //block.classList.add(`textblock-${alignment}`);
 
   // Width variant
-  const validWidths = ['width-100', 'width-90', 'width-80', 'width-70', 'width-60', 'width-50'];
-  const width = validWidths.find((v) => block.classList.contains(v));
-  if (width) {
-    block.classList.add(`textblock-${width}`);
-  }
+  //const validWidths = ['width-100', 'width-90', 'width-80', 'width-70', 'width-60', 'width-50'];
+  //const width = validWidths.find((v) => block.classList.contains(v));
+  //if (width) {
+  //  block.classList.add(`textblock-${width}`);
+  //}
 }

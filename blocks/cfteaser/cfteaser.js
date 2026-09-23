@@ -1,6 +1,5 @@
 /**
- * CF Teaser block: renders a Content Fragment through a Workfront Fusion
- * webhook that returns pre-rendered markup for a given template.
+ * CF Teaser block: is a variation of the content-fragment block
  *
  * Authored content (rows):
  *   1. Content Fragment path/link
@@ -12,62 +11,153 @@
  * @param {Element} block
  */
 export default async function decorate(block) {
-  const UNIQUE_ID = 'dpreveli_adobedemoamericas275my1820831919654__185JadeCrocodile';
-  const WEBHOOK_URL = 'https://hook.app.workfrontfusion.com/xy2bm8b8x94fjn53iis1sh1im4k79nxj';
-  const TEMPLATE_NAME = 'Top Image CTA';
-  const TEMPLATE_VARIANTS = {
-    'top-image-cta': 'Top Image CTA',
-    'left-image-cta': 'Left Image CTA',
-  };
+//  const UNIQUE_ID = 'dpreveli_adobedemoamericas275my1820831919654__185JadeCrocodile';
+//  const WEBHOOK_URL = 'https://hook.app.workfrontfusion.com/xy2bm8b8x94fjn53iis1sh1im4k79nxj';
+//  const TEMPLATE_NAME = 'Top Image CTA';
+//  const TEMPLATE_VARIANTS = {
+//    'top-image-cta': 'Top Image CTA',
+//    'left-image-cta': 'Left Image CTA',
+//  };
 
-  const contentPath = block.querySelector(':scope div:nth-child(1) > div a')?.textContent?.trim();
-  const variationname = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim()?.toLowerCase()?.replace(' ', '_') || 'master';
-  const variantClass = Object.keys(TEMPLATE_VARIANTS).find((v) => block.classList.contains(v));
-  const displayStyle = variantClass ? TEMPLATE_VARIANTS[variantClass] : TEMPLATE_NAME;
+ // const contentPath = block.querySelector(':scope div:nth-child(1) > div a')?.textContent?.trim();
+ // const variationname = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim()?.toLowerCase()?.replace(' ', '_') || 'master';
+ // const variantClass = Object.keys(TEMPLATE_VARIANTS).find((v) => block.classList.contains(v));
+ // const displayStyle = variantClass ? TEMPLATE_VARIANTS[variantClass] : TEMPLATE_NAME;
 
-  block.innerHTML = '';
-  const params = `?uniqueID=${UNIQUE_ID}&templateName=${displayStyle}&cfPath=${contentPath}&variation=${variationname}&isAuthor=false`;
-
-  try {
-    const response = await fetch(WEBHOOK_URL + params);
-
-    if (!response.ok) {
-      console.error(`error making cf+t render request:${response.status}`, {
-        contentPath,
-        variationname,
-      });
-      block.innerHTML = '<div>Webhook Error</div>';
-      return; // Exit early if response is not ok
-    }
-
-    let offer;
-    try {
-      offer = await response.text();
-    } catch (parseError) {
-      console.error('Error parsing offer text from response:', {
-        error: parseError.message,
-        stack: parseError.stack,
-        contentPath,
-        variationname,
-      });
-      block.innerHTML = '<div>Parse Error</div>';
-      return;
-    }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(offer, 'text/html');
-    const overlay = doc.querySelector('.cfteaser-overlay');
-    if (overlay) {
-      block.innerHTML = overlay.outerHTML;
-    } else {
-      block.innerHTML = '<div>Empty</div>';
-    }
-  } catch (error) {
-    console.error('Error rendering content fragment:', {
-      error: error.message,
-      stack: error.stack,
-      contentPath,
-      variationname,
-    });
-    block.innerHTML = '<div>Error rendering</div>';
-  }
-}
+  const CONFIG = {
+     WRAPPER_SERVICE_URL: 'https://3635370-refdemoapigateway-stage.adobeioruntime.net/api/v1/web/ref-demo-api-gateway/fetch-cf',
+     GRAPHQL_QUERY: '/graphql/execute.json/wehealthcare/getteaser',
+   };
+   
+ 
+   const aempublishurl = window.placeholders?.default?.aempublish; //listOfAllPlaceholdersData?.aempublish;
+   const contentPath = block.querySelector(':scope div:nth-child(1) > div p')?.textContent?.trim();
+   const variationname = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim()?.toLowerCase()?.replace(' ', '_') || 'master';
+ 
+   const displayStyle = ['image-left', 'image-right', 'image-top', 'image-bottom'].find((v) => block.classList.contains(v)) || '';
+   const alignment = ['text-left', 'text-right', 'text-center'].find((v) => block.classList.contains(v)) || '';
+   const ctaStyle = ['cta-link', 'cta-button', 'cta-button-secondary', 'cta-button-dark'].find((v) => block.classList.contains(v)) || 'cta-button-cf';
+ 
+   block.innerHTML = '';
+ 
+   const requestConfig = {
+     url: CONFIG.WRAPPER_SERVICE_URL,
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({
+       graphQLPath: `${aempublishurl}${CONFIG.GRAPHQL_QUERY}`,
+       cfPath: contentPath,
+       variation: `${variationname};ts=${Date.now()}`,
+     }),
+   };
+ 
+   try {
+     const response = await fetch(requestConfig.url, {
+       method: requestConfig.method,
+       headers: requestConfig.headers,
+       body: requestConfig.body,
+     });
+ 
+     if (!response.ok) {
+       console.error(`error making cf graphql request:${response.status}`, {
+         contentPath,
+         variationname,
+       });
+       block.innerHTML = '';
+       return; // Exit early if response is not ok
+     }
+ 
+     let offer;
+     try {
+       offer = await response.json();
+     } catch (parseError) {
+       console.error('Error parsing offer JSON from response:', {
+         error: parseError.message,
+         stack: parseError.stack,
+         contentPath,
+         variationname,
+       });
+       block.innerHTML = '';
+       return;
+     }
+ 
+     const cfReq = offer?.data?.teaserByPath?.item;
+ 
+     if (!cfReq) {
+       console.error('Error parsing response from GraphQL request - no valid data found', {
+         response: offer,
+         contentPath,
+         variationname,
+       });
+       block.innerHTML = '';
+       return; // Exit early if no valid data
+     }
+ 
+     const imgUrl = cfReq.image?._publishUrl;
+ 
+     // Set background image and styles based on layout
+     let bannerContentStyle = '';
+     let bannerDetailStyle = '';
+ 
+     if (displayStyle === 'image-left' || displayStyle === 'image-right'
+       || displayStyle === 'image-top' || displayStyle === 'image-bottom') {
+       bannerContentStyle = `background-image: url(${imgUrl});`;
+     } else {
+       // Default layout: image as background with gradient overlay
+       bannerDetailStyle = `background-image: linear-gradient(90deg,rgba(0,0,0,0.6), rgba(0,0,0,0.1) 80%) ,url(${imgUrl});`;
+     }
+ 
+     // Derive CTA href, mapping AEM repository paths to site-relative paths
+     let ctaHref = '#';
+     const cta = cfReq?.buttonLink;
+     if (cta) {
+       if (typeof cta === 'string') {
+         ctaHref = /^https?:\/\//i.test(cta) ? cta : `${aempublishurl || ''}${cta}`;
+       } else if (typeof cta === 'object') {
+         ctaHref = cta._publishUrl || cta._url || cta._path || '#';
+       }
+     }
+ 
+     try {
+       let candidate = ctaHref;
+       if (/^https?:\/\//i.test(candidate)) {
+         const u = new URL(candidate);
+         candidate = u.pathname;
+       }
+       if (candidate && candidate.startsWith('/content/')) {
+         const mapped = await mapAemPathToSitePath(candidate);
+         if (mapped) ctaHref = mapped;
+       }
+     } catch (e) {
+       console.warn('Failed to map CTA via paths.json', e);
+     }
+ 
+     block.innerHTML = `<div class='cfteaser-overlay'>
+          <div class='cfteaser-image'>
+            <img src="${imgUrl}" alt="${cfReq?.title || ''}" />
+          </div>
+          <div class='cfteaser-body'>
+             <p class='cfeyebrow'>${cfReq?.eyebrow || ''}</p>
+             <h2 class='cftitle'>${cfReq?.title}</h2>
+             <h3 class='cfsubtitle'>${cfReq?.subTitle || ''}</h3>
+             <div class='cfdescription'>${cfReq?.text?.html || ''}</div>
+             <p class="button-container ${ctaStyle}">
+                 <a href="${ctaHref}" target="_blank" rel="noopener" class='button'>
+                   <span>${cfReq?.buttonLabel}</span>
+                 </a>
+             </p>
+           </div>
+           <div class='banner-logo'>
+           </div>
+       </div>`;
+   } catch (error) {
+     console.error('Error rendering content fragment:', {
+       error: error.message,
+       stack: error.stack,
+       contentPath,
+       variationname,
+     });
+     block.innerHTML = '';
+   }
+ }
+ 

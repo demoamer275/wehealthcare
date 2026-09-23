@@ -18,14 +18,12 @@ import { getHostname, mapAemPathToSitePath } from '../../scripts/utils.js';
 export default async function decorate(block) {
   const CONFIG = {
     WRAPPER_SERVICE_URL: 'https://3635370-refdemoapigateway-stage.adobeioruntime.net/api/v1/web/ref-demo-api-gateway/fetch-cf',
-    GRAPHQL_QUERY: '/graphql/execute.json/wehealthcare/teaserbypath',
+    GRAPHQL_QUERY: '/graphql/execute.json/wehealthcare/getteaser',
   };
+  
 
-  const hostnameFromPlaceholders = await getHostname();
-  const hostname = hostnameFromPlaceholders || getMetadata('hostname');
-  const aempublishurl = hostname?.replace('author', 'publish')?.replace(/\/$/, '');
-
-  const contentPath = block.querySelector(':scope div:nth-child(1) > div a')?.textContent?.trim();
+  const aempublishurl = window.placeholders?.default?.aempublish; //listOfAllPlaceholdersData?.aempublish;
+  const contentPath = block.querySelector(':scope div:nth-child(1) > div p')?.textContent?.trim();
   const variationname = block.querySelector(':scope div:nth-child(2) > div')?.textContent?.trim()?.toLowerCase()?.replace(' ', '_') || 'master';
 
   const displayStyle = ['image-left', 'image-right', 'image-top', 'image-bottom'].find((v) => block.classList.contains(v)) || '';
